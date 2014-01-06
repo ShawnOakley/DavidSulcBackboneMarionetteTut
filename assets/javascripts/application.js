@@ -1,24 +1,23 @@
-MyApp = new Backbone.Marionette.Application();
 
 MyApp.addRegions({
   mainRegion: "#content"
 });
 
 AngryCat = Backbone.Model.extend({
-	defaults: {
-		votes: 0
-	},
+        defaults: {
+                votes: 0
+        },
 
-	addVote: function(){
-		this.set('votes', this.get('votes') + 1)
-	},
+        addVote: function(){
+                this.set('votes', this.get('votes') + 1)
+        },
 
-	rankUp: function() {
-		this.set({rank: this.get('rank') - 1});
-	},
-	rankDown: function() {
-		this.set({rank:this.get('rank') + 1});
-	}
+        rankUp: function() {
+                this.set({rank: this.get('rank') - 1});
+        },
+        rankDown: function() {
+                this.set({rank:this.get('rank') + 1});
+        }
 });
 
 AngryCats = Backbone.Collection.extend({
@@ -71,30 +70,30 @@ AngryCats = Backbone.Collection.extend({
   },
 
   comparator: function(cat){
-  	return cat.get('rank')
+          return cat.get('rank')
   },
 
-	var self = this;
+        var self = this;
  
-	rankUp: function(cat) {
-	 // find the cat we're going to swap ranks with
-	 var rankToSwap = cat.get('rank') - 1;
-	 var otherCat = this.at(rankToSwap - 1);
+        rankUp: function(cat) {
+         // find the cat we're going to swap ranks with
+         var rankToSwap = cat.get('rank') - 1;
+         var otherCat = this.at(rankToSwap - 1);
  
-	 // swap ranks
-	 cat.rankUp();
-	 otherCat.rankDown();
-	},
+         // swap ranks
+         cat.rankUp();
+         otherCat.rankDown();
+        },
  
-	rankDown: function(cat) {
-	 // find the cat we're going to swap ranks with
-	 var rankToSwap = cat.get('rank') + 1;
-	 var otherCat = this.at(rankToSwap - 1);
+        rankDown: function(cat) {
+         // find the cat we're going to swap ranks with
+         var rankToSwap = cat.get('rank') + 1;
+         var otherCat = this.at(rankToSwap - 1);
  
-	 // swap ranks
-	 cat.rankDown();
-	 otherCat.rankUp();
-	}
+         // swap ranks
+         cat.rankDown();
+         otherCat.rankUp();
+        }
 
 });
 
@@ -110,23 +109,23 @@ AngryCatView = Backbone.Marionette.ItemView.extend({
   },
 
   initialize: function() {
-  	this.listenTo(this.model, "change:votes", this.render);
+          this.listenTo(this.model, "change:votes", this.render);
   },
   
-	rankUp: function(){
-		this.model.addVote();
-		MyApp.trigger('rank:up', this.model);
-	},
-	 
-	rankDown: function(){
-		this.model.addVote();
-	  MyApp.trigger('rank:down', this.model);
-	},
+        rankUp: function(){
+                this.model.addVote();
+                MyApp.trigger('rank:up', this.model);
+        },
+        
+        rankDown: function(){
+                this.model.addVote();
+         MyApp.trigger('rank:down', this.model);
+        },
 
-	disqualify: function() {
-		MyApp.vent.trigger('cat:disqualify', this.model);
-		this.model.destroy();
-	}
+        disqualify: function() {
+                MyApp.vent.trigger('cat:disqualify', this.model);
+                this.model.destroy();
+        }
 });
 
 AngryCatsView = Backbone.Marionette.CompositeView.extend({
@@ -157,9 +156,9 @@ $(document).ready(function(){
 
   MyApp.start({cats: cats});
 
-  cats.add(new AngryCat({ 
-  	name: 'Cranky Cat', 
-  	image_path: 'assets/images/cat4.jpg',
-  	rank: cats.size() + 1
+  cats.add(new AngryCat({
+          name: 'Cranky Cat',
+          image_path: 'assets/images/cat4.jpg',
+          rank: cats.size() + 1
   }));
 });
