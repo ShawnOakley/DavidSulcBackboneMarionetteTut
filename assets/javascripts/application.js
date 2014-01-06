@@ -4,7 +4,22 @@ MyApp.addRegions({
   mainRegion: "#content"
 });
 
-AngryCat = Backbone.Model.extend({});
+AngryCat = Backbone.Model.extend({
+	defaults: {
+		votes: 0
+	},
+
+	addVote: function(){
+		this.set('votes', this.get('votes') + 1)
+	},
+
+	rankUp: function() {
+		this.set({rank: this.get('rank') - 1});
+	},
+	rankDown: function() {
+		this.set({rank:this.get('rank') + 1});
+	}
+});
 
 AngryCats = Backbone.Collection.extend({
   model: AngryCat,
@@ -16,7 +31,16 @@ AngryCats = Backbone.Collection.extend({
       ++rank;
     });
 
+    this.on('add', function(cat){
+    	if ( ! cat.get('rank')) {
+    		var error = Error("Cat must have a rank defined before being added to the collection");
+    		error.name = "NoRankError";
+    		throw error;
+    	}
+    });
+
     var self = this;
+
   	MyApp.on('rank:up', function(cat){
     	if (cat.get('rank') == 1) {
     		// can't increase rank of top-ranked cat
@@ -77,10 +101,12 @@ AngryCatView = Backbone.Marionette.ItemView.extend({
   },
   
 	rankUp: function(){
+		this.model.addVote();
 	  MyApp.trigger('rank:up', this.model);
 	},
 	 
 	rankDown: function(){
+		this.model.addVote();
 	  MyApp.trigger('rank:down', this.model);
 	}
 });
@@ -112,4 +138,10 @@ $(document).ready(function(){
   ]);
 
   MyApp.start({cats: cats});
+
+  cats.add(new AngryCat({ 
+  	name: 'Cranky Cat', 
+  	image_path: 'assets/images/cat4.jpg',
+  	rank: cats.size() + 1
+  }));
 });
